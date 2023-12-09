@@ -15,9 +15,9 @@ Multilayer neural networks trained with the back-propagation algorithm constitut
 ### MNIST
 
 
-| Backbonecol | Validation Accuracycol | config | download    |
-| :------------ | ------------------------ | :------- | ------------- |
-| LeNet5      | 98.97%                 | config | model / log |
+| Backbonecol | Validation Accuracy | config | download    |
+| :------------ | --------------------- | :------- | ------------- |
+| LeNet5      | 98.97%              | config | model / log |
 
 ## Citation
 
