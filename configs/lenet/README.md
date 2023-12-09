@@ -1,4 +1,4 @@
-# LeNet
+## LeNet
 
 > [Gradient-based learning applied to document recognition](https://ieeexplore.ieee.org/document/726791)
 
@@ -10,14 +10,37 @@ Multilayer neural networks trained with the back-propagation algorithm constitut
 
 <!-- [IMAGE] -->
 
-<div align=center>
-<img src="https://user-images.githubusercontent.com/24582831/142900351-89559574-79cc-4f57-8f69-5d88765ec38d.png" width="80%"/>
-</div>
-
 ## Results and models
 
 ### MNIST
 
-| Backbone | Validation Accuracy | config | download |
-| ------ | -------- | ------ | -------- | -------------- |
-| LeNet5  |  98.97% | [config]()  | [model]() \| [log]()     |
+
+| Backbone | Validation Accuracy | config     | download             |
+| LeNet5   | 98.97%              | [config]() | [model]() \| [log]() |
+
+
+## Citation
+
+```bibtext
+@ARTICLE{726791,
+  author={Lecun, Y. and Bottou, L. and Bengio, Y. and Haffner, P.},
+  journal={Proceedings of the IEEE}, 
+  title={Gradient-based learning applied to document recognition}, 
+  year={1998},
+  volume={86},
+  number={11},
+  pages={2278-2324},
+  doi={10.1109/5.726791}}
+```
+
+```bibtext
+@ARTICLE{6296535,
+  author={Deng, Li},
+  journal={IEEE Signal Processing Magazine}, 
+  title={The MNIST Database of Handwritten Digit Images for Machine Learning Research [Best of the Web]}, 
+  year={2012},
+  volume={29},
+  number={6},
+  pages={141-142},
+  doi={10.1109/MSP.2012.2211477}}
+```
