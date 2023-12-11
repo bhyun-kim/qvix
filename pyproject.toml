@@ -24,7 +24,7 @@ classifiers = [
 urls = {repository = "https://github.com/bhyun-kim/qvix"}
 dependencies=[
     "equinox >= 0.11.2",
-    "optax" >= 0.1.7,
+    "optax>= 0.1.7",
     "torch >=1.7.1",
     "torchvision >=0.8.0",
     "gputil",
