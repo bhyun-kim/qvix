@@ -104,7 +104,6 @@ def main() -> None:
 
         if i % cfg['validate_interval'] == 0:
             val_loss, val_acc = evaluate(model, testloader, key, loss_cfg)
-            # logg validation info, accuracy in percentage
             logger.info(
                 f"Iteration: {i}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_acc * 100:.2f}%"
             )
