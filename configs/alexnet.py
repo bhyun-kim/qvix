@@ -26,8 +26,8 @@ test_transforms = [
 
 train_loader = dict(
     dataset=dict(
-        name="CIFAR10Dataset",
-        root="data\CIFAR10",
+        name="ImageNetDataset",
+        root="data\ImageNet",
         train=True,
         transforms=train_transforms,
         download=True,
@@ -42,8 +42,8 @@ train_loader = dict(
 
 test_loader = dict(
     dataset=dict(
-        name="CIFAR10Dataset",
-        root="data\CIFAR10",
+        name="ImageNetDataset",
+        root="data\ImageNet",
         train=False,
         transforms=test_transforms,
         download=True,
