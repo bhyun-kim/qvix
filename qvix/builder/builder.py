@@ -6,10 +6,8 @@ import torchvision as tv
 from jaxtyping import Array, PRNGKeyArray
 from torch.utils.data import DataLoader
 
-import jax.numpy as jnp
-
-from qvix.registry import (BackboneRegistry, DatasetRegistry,
-                                LossRegistry, Registry, TransformRegistry)
+from qvix.registry import (BackboneRegistry, DatasetRegistry, LossRegistry,
+                           Registry, TransformRegistry)
 
 
 def build_object(cfg: dict,
@@ -115,21 +113,3 @@ def calculate_loss(model: eqx.Module,
     _loss_cfg = deepcopy(loss_cfg)
     loss_name = _loss_cfg.pop('name')
     return LossRegistry(loss_name)(logits, labels, **_loss_cfg)
-
-def calculate_step(model: eqx.Module,
-                   loss_cfg: dict,
-                   key: PRNGKeyArray,
-                   x: Array,
-                   y: Array,
-                   inference: bool = False) -> Array:
-    """Forward with optax.softmax_cross_entropy."""
-
-    logits = model(x, key=key, inference=inference)
-
-    pred_y = jnp.argmax(logits, axis=1)
-    acc = jnp.mean(y == pred_y)
-
-    _loss_cfg = deepcopy(loss_cfg)
-    loss_name = _loss_cfg.pop('name')
-    loss = LossRegistry(loss_name)(logits, y, **_loss_cfg)
-    return loss, acc
