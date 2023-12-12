@@ -1,3 +1,15 @@
+iterations = int((1300 * 1000 // 128) * 200)
+batch_size = 128
+work_dir = "work_dir/lenet"
+seed = 0
+
+checkpoint_interval = 1000
+log_interval = 100
+validate_interval = 1000
+
+load_from = None
+resume_from = None
+
 model = dict(
     name="AlexNet",
     num_classes=1000,
@@ -28,9 +40,8 @@ train_loader = dict(
     dataset=dict(
         name="ImageNetDataset",
         root="data\ImageNet",
-        train=True,
+        split="train",
         transforms=train_transforms,
-        download=True,
     ),
     dataloader=dict(
         batch_size=128,
@@ -44,9 +55,8 @@ test_loader = dict(
     dataset=dict(
         name="ImageNetDataset",
         root="data\ImageNet",
-        train=False,
+        split="val",
         transforms=test_transforms,
-        download=True,
     ),
     dataloader=dict(
         batch_size=128,
@@ -58,8 +68,5 @@ test_loader = dict(
 
 optimizer = dict(
     name="Adam",
-    learning_rate=0.01,
+    learning_rate=3e-4,
 )
-
-epochs = 10
-batch_size = 128

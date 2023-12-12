@@ -1,8 +1,9 @@
-
 from typing import Any
+
 from torchvision.datasets import ImageNet
 
 from qvix.registry import DatasetRegistry
+
 
 @DatasetRegistry.register()
 class ImageNetDataset(ImageNet):
@@ -18,17 +19,10 @@ class ImageNetDataset(ImageNet):
             and transforms it.
         loader : A function to load an image given its path.
     """
-    
 
-    def __init__(self,
-                 root: str,
-                    split: str = "train",
-                    **kwargs: Any
-                 ):
-        super().__init__(root,
-                         split=split,
-                         **kwargs)
-        
+    def __init__(self, root: str, split: str = "train", **kwargs: Any):
+        super().__init__(root, split=split, **kwargs)
+
     def __getitem__(self, index: int) -> tuple[Any, Any]:
         """
         Get item from dataset.
