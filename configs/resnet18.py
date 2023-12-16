@@ -4,7 +4,7 @@ work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
 checkpoint_interval = 1000
-log_interval = 1
+log_interval = 100
 validate_interval = 1000
 
 load_from = None
@@ -18,7 +18,7 @@ model = dict(
 loss = dict(name="SoftmaxCrossEntropyLoss")
 
 train_transforms = [
-    dict(name="Resize", size=36),
+    dict(name="Resize", size=35),
     dict(name="RandomCrop", size=32),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
@@ -28,8 +28,6 @@ train_transforms = [
 ]
 
 test_transforms = [
-    dict(name="Resize", size=36),
-    dict(name="CenterCrop", size=32),
     dict(name="ToTensor"),
     dict(name="Normalize",
          mean=[0.485, 0.456, 0.406],
