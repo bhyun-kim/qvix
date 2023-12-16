@@ -14,6 +14,7 @@ def evaluate(
     testloader: DataLoader,
     key: PRNGKeyArray,
     loss_cfg: dict,
+    state: eqx.nn.State,
 ) -> Tuple[float, float]:
     """This function evaluates the model on the test dataset,
     computing both the average loss and the average accuracy.
@@ -28,7 +29,7 @@ def evaluate(
         keys = jax.random.split(key, num=x.shape[0])
         keys = jnp.array(keys)
 
-        loss, acc = calculate_step(model, loss_cfg, keys, x, y, inference=True)
+        loss, (acc, _) = calculate_step(model, loss_cfg, keys, x, y, state)
 
         avg_loss += loss
         avg_acc += acc

@@ -57,7 +57,12 @@ def main() -> None:
 
     key = jax.random.PRNGKey(seed)
 
-    model = build_object(model_cfg, BackboneRegistry, key)
+    model_name = model_cfg.pop("name")
+    model = BackboneRegistry(model_name)
+    model, model_state = eqx.nn.make_with_state(model)(key, **model_cfg)
+
+    logger.info(f"Model: {model_name}")
+    logger.info(f"Model Architecture: {model}")
 
     start_iteration = 1
     if resume_from_cfg is not None:
@@ -90,8 +95,8 @@ def main() -> None:
         x = x.numpy()
         y = y.numpy().astype(int)
 
-        model, opt_state, train_loss, train_acc = make_step(
-            model, opt_state, optimizer, key, loss_cfg, x, y)
+        model, model_state, opt_state, train_loss, train_acc = make_step(
+            model, model_state, opt_state, optimizer, key, loss_cfg, x, y)
 
         if i % log_interval == 0:
             logger.info(
@@ -103,10 +108,13 @@ def main() -> None:
             eqx.tree_serialise_leaves(save_checkpoint, model)
 
         if i % cfg['validate_interval'] == 0:
-            val_loss, val_acc = evaluate(model, testloader, key, loss_cfg)
+            model = eqx.nn.inference_mode(model)
+            val_loss, val_acc = evaluate(model, testloader, key, loss_cfg,
+                                         model_state)
             logger.info(
                 f"Iteration: {i}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_acc * 100:.2f}%"
             )
+            model = eqx.nn.inference_mode(model, value=False)
 
     end_time = time.time()
     logger.info(f"End training at {time.strftime('%Y-%m-%d %H:%M:%S')}")
