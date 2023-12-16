@@ -65,10 +65,10 @@ test_loader = dict(
 optimizer = dict(
     name="AdamW",
     scheduler=dict(
-        init_value=0.00001,
-        peak_value=0.001,
+        init_value=0.000001,
+        peak_value=0.0001,
         name="WarmupCosineDecay",
-        warmup_steps=500,
+        warmup_steps=10000,
         decay_steps=iterations
     ),
 )
