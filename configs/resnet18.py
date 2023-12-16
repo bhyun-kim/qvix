@@ -63,7 +63,7 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="SGD",
+    name="Adam",
     momentum=0.9,
     scheduler=dict(
         init_value=0.0001,
