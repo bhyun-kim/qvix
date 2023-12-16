@@ -43,8 +43,7 @@ train_loader = dict(
     dataloader=dict(
         batch_size=batch_size,
         shuffle=True,
-        num_workers=4,
-        pin_memory=True,
+        num_workers=4
     ),
 )
 
@@ -57,8 +56,7 @@ test_loader = dict(
     dataloader=dict(
         batch_size=128,
         shuffle=False,
-        num_workers=4,
-        pin_memory=True,
+        num_workers=4
     ),
 )
 
