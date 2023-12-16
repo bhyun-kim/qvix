@@ -1,4 +1,4 @@
-iterations = 100000
+iterations = 20000
 batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
@@ -65,8 +65,8 @@ test_loader = dict(
 optimizer = dict(
     name="AdamW",
     scheduler=dict(
-        init_value=0.000001,
-        peak_value=0.0001,
+        init_value=0.008,
+        peak_value=0.12,
         name="WarmupCosineDecay",
         warmup_steps=10000,
         decay_steps=iterations
