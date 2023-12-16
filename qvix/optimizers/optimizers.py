@@ -25,6 +25,26 @@ def Adam(learning_rate: ScalarOrSchedule,
                       mu_dtype=mu_dtype)
 
 @OptimizerRegistry.register()
+def AdamW(learning_rate: ScalarOrSchedule,
+          b1: float = 0.9,
+          b2: float = 0.999,
+          eps: float = 1e-8,
+          eps_root: float = 0.0,
+          mu_dtype: Optional[Any] = None,
+          weight_decay=0.0001, 
+          mask=None) -> optax.GradientTransformation:
+    """AdamW optimizer from optax."""
+
+    return optax.adamw(learning_rate=learning_rate,
+                       b1=b1,
+                       b2=b2,
+                       eps=eps,
+                       eps_root=eps_root,
+                       mu_dtype=mu_dtype,
+                       weight_decay=weight_decay,
+                       mask=mask)
+
+@OptimizerRegistry.register()
 def SGD(learning_rate: ScalarOrSchedule,
         momentum: float = 0.0,
         nesterov: bool = False) -> optax.GradientTransformation:

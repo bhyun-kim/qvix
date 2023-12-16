@@ -1,4 +1,4 @@
-from .optimizers import Adam, SGD
+from .optimizers import Adam, AdamW, SGD
 from .schedulers import WarmupCosineDecay
 
-__all__ = ['Adam', 'SGD', 'WarmupCosineDecay']
+__all__ = ['Adam', 'AdamW', 'SGD', 'WarmupCosineDecay']
