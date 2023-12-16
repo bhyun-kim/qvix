@@ -3,9 +3,9 @@ batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
-checkpoint_interval = 391
+checkpoint_interval = 3910
 log_interval = 1
-validate_interval = 391
+validate_interval = 3910
 
 load_from = None
 resume_from = None
