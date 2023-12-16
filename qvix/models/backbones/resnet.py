@@ -46,7 +46,7 @@ class BasicBlock(eqx.Module):
             nn.BatchNorm(out_channels, axis_name='batch')
         ])
 
-        self.shortcut = nn.Sequential([])
+        self.shortcut = nn.Sequential([nn.Identity()])
 
         if stride != 1 or in_channels != self.expansion * out_channels:
             keys = jax.random.split(key, 2)
@@ -73,8 +73,8 @@ class BasicBlock(eqx.Module):
         """
 
         out, state = self.layers(x, state=state)
-        shortcut, state = self.shortcut(x, state=state)
-        out += shortcut
+        residual, state = self.shortcut(x, state=state)
+        out += residual
         out = self.act(out)
 
         return out, state
@@ -122,7 +122,7 @@ class Bottleneck(eqx.Module):
             nn.BatchNorm(self.expansion * out_channels, 'batch')
         ])
 
-        self.shortcut = nn.Sequential([])
+        self.shortcut = nn.Sequential([nn.Identity()])
 
         if stride != 1 or in_channels != self.expansion * out_channels:
             keys = jax.random.split(key, 2)
@@ -147,8 +147,8 @@ class Bottleneck(eqx.Module):
         """
 
         out, state = self.layers(x, state=state)
-        shortcut, state = self.shortcut(x, state=state)
-        out += shortcut
+        residual, state = self.shortcut(x, state=state)
+        out += residual
         out = self.act(out)
 
         return out, state
