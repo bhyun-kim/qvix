@@ -39,6 +39,6 @@ def make_step(model: eqx.Module, model_state: nn.State,
 
     (loss, (acc, model_state)), grads = eqx.filter_value_and_grad(
         calculate_step, has_aux=True)(model, loss_cfg, keys, x, y, model_state)
-    updates, opt_state = optimizer.update(grads, opt_state)
+    updates, opt_state = optimizer.update(grads, opt_state, model)
     model = eqx.apply_updates(model, updates)
     return model, model_state, opt_state, loss, acc
