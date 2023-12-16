@@ -1,11 +1,11 @@
-iterations = 70000
-batch_size = 256
+iterations = 78200
+batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
-checkpoint_interval = 10000
+checkpoint_interval = 391
 log_interval = 1
-validate_interval = 10000
+validate_interval = 391
 
 load_from = None
 resume_from = None
@@ -61,12 +61,13 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="Adam",
+    name="SGD",
+    momentum=0.9,
     scheduler=dict(
-        init_value=0.0001,
+        init_value=0.1,
         peak_value=0.1,
         name="WarmupCosineDecay",
-        warmup_steps=10000,
+        warmup_steps=1,
         decay_steps=iterations
     ),
 )
