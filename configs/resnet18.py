@@ -4,7 +4,7 @@ work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
 checkpoint_interval = 10000
-log_interval = 100
+log_interval = 1
 validate_interval = 10000
 
 load_from = None
