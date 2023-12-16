@@ -71,5 +71,5 @@ test_loader = dict(
 
 optimizer = dict(
     name="Adam",
-    learning_rate=3e-4,
+    learning_rate=3e-4
 )

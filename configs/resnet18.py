@@ -1,11 +1,11 @@
-iterations = 10000
+iterations = 100000
 batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
-checkpoint_interval = 1000
+checkpoint_interval = 10000
 log_interval = 100
-validate_interval = 1000
+validate_interval = 10000
 
 load_from = None
 resume_from = None
@@ -23,15 +23,15 @@ train_transforms = [
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
     dict(name="Normalize",
-         mean=[0.485, 0.456, 0.406],
-         std=[0.229, 0.224, 0.225]),
+         mean=[0.4914, 0.4822, 0.4465],
+         std=[0.2023, 0.1994, 0.2010]),
 ]
 
 test_transforms = [
     dict(name="ToTensor"),
     dict(name="Normalize",
-         mean=[0.485, 0.456, 0.406],
-         std=[0.229, 0.224, 0.225]),
+         mean=[0.4914, 0.4822, 0.4465],
+         std=[0.2023, 0.1994, 0.2010]),
 ]
 
 train_loader = dict(
@@ -63,6 +63,13 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="Adam",
-    learning_rate=3e-4,
+    name="SGD",
+    learning_rate=0.001,
+    momentum=0.9,
+    scheduler=dict(
+        name="WarmupCosineDecay",
+        warmup_steps=500,
+        decay_steps=iterations,
+        alpha=0.0,
+    ),
 )

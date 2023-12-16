@@ -9,7 +9,7 @@ import optax
 
 import qvix
 from qvix.builder import build_dataloader, build_object
-from qvix.registry import BackboneRegistry, OptimizerRegistry
+from qvix.registry import BackboneRegistry, OptimizerRegistry, SchedulerRegistry
 from qvix.utils import (cvt_cfgPathToDict, evaluate, get_logger,
                         loggin_gpu_info, loggin_system_info, make_step)
 
@@ -78,8 +78,14 @@ def main() -> None:
 
     trainloader = build_dataloader(trainloader_cfg)
     testloader = build_dataloader(testloader_cfg)
-    optimizer = build_object(optimizer_cfg, OptimizerRegistry)
 
+
+    if 'scheduler' in optimizer_cfg:
+        scheduler_cfg = optimizer_cfg.pop('scheduler')
+        scheduler = build_object(scheduler_cfg, SchedulerRegistry)
+        optimizer_cfg['learning_rate'] = scheduler
+
+    optimizer = build_object(optimizer_cfg, OptimizerRegistry)
     opt_state = optimizer.init(eqx.filter(model, eqx.is_array))
 
     start_time = time.time()

@@ -23,3 +23,13 @@ def Adam(learning_rate: ScalarOrSchedule,
                       eps=eps,
                       eps_root=eps_root,
                       mu_dtype=mu_dtype)
+
+@OptimizerRegistry.register()
+def SGD(learning_rate: ScalarOrSchedule,
+        momentum: float = 0.0,
+        nesterov: bool = False) -> optax.GradientTransformation:
+    """SGD optimizer from optax."""
+
+    return optax.sgd(learning_rate=learning_rate,
+                     momentum=momentum,
+                     nesterov=nesterov)
