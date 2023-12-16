@@ -1,4 +1,4 @@
-iterations = 20000
+iterations = 65000
 batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
@@ -18,8 +18,6 @@ model = dict(
 loss = dict(name="SoftmaxCrossEntropyLoss")
 
 train_transforms = [
-    dict(name="Resize", size=35),
-    dict(name="RandomCrop", size=32),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
     dict(name="Normalize",
@@ -63,10 +61,10 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="SGD",
+    name="Adam",
     scheduler=dict(
-        init_value=0.008,
-        peak_value=0.12,
+        init_value=0.00001,
+        peak_value=0.001,
         name="WarmupCosineDecay",
         warmup_steps=10000,
         decay_steps=iterations
