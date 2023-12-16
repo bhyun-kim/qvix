@@ -64,9 +64,10 @@ test_loader = dict(
 
 optimizer = dict(
     name="SGD",
-    learning_rate=0.001,
     momentum=0.9,
     scheduler=dict(
+        init_value=0.0001,
+        init_value=0.01,
         name="WarmupCosineDecay",
         warmup_steps=500,
         decay_steps=iterations
