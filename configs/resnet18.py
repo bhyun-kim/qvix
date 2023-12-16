@@ -63,7 +63,7 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="AdamW",
+    name="SGD",
     scheduler=dict(
         init_value=0.008,
         peak_value=0.12,
