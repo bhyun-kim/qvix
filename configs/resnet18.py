@@ -69,7 +69,6 @@ optimizer = dict(
     scheduler=dict(
         name="WarmupCosineDecay",
         warmup_steps=500,
-        decay_steps=iterations,
-        alpha=0.0,
+        decay_steps=iterations
     ),
 )
