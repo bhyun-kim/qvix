@@ -22,9 +22,13 @@ def Resize(size: int) -> tv.transforms.Resize:
 
 
 @TransformRegistry.register()
-def RandomCrop(size: int) -> tv.transforms.RandomCrop:
+def RandomCrop(size: int, padding=None, pad_if_needed=False, fill=0, padding_mode='constant') -> tv.transforms.RandomCrop:
     """Crop the given PIL Image at a random location."""
-    return tv.transforms.RandomCrop(size)
+    return tv.transforms.RandomCrop(size, 
+                                    padding=padding, 
+                                    pad_if_needed=pad_if_needed, 
+                                    fill=fill, 
+                                    padding_mode=padding_mode)
 
 
 @TransformRegistry.register()
