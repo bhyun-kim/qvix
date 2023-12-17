@@ -18,8 +18,7 @@ model = dict(
 loss = dict(name="SoftmaxCrossEntropyLoss")
 
 train_transforms = [
-    dict(name="Resize", size=40),
-    dict(name="RandomCrop", size=32),
+    dict(name="RandomCrop", size=32, padding=4),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
     dict(name="Normalize",
@@ -64,8 +63,8 @@ optimizer = dict(
     name="SGD",
     momentum=0.9,
     scheduler=dict(
-        init_value=0.01,
-        peak_value=0.01,
+        init_value=0.1,
+        peak_value=0.1,
         name="WarmupCosineDecay",
         warmup_steps=1,
         decay_steps=iterations
