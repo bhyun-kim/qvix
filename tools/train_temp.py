@@ -83,17 +83,13 @@ def main() -> None:
     trainloader = build_dataloader(trainloader_cfg)
     testloader = build_dataloader(testloader_cfg)
 
-    if isinstance(optimizer_cfg, list):
-        optimizer_chain = []
-        
+    
+    if 'scheduler' in optimizer_cfg:
+        scheduler_cfg = optimizer_cfg.pop('scheduler')
+        scheduler = build_object(scheduler_cfg, SchedulerRegistry)
+        optimizer_cfg['learning_rate'] = scheduler
 
-    elif isinstance(optimizer_cfg, dict):
-        if 'scheduler' in optimizer_cfg:
-            scheduler_cfg = optimizer_cfg.pop('scheduler')
-            scheduler = build_object(scheduler_cfg, SchedulerRegistry)
-            optimizer_cfg['learning_rate'] = scheduler
-
-        optimizer = build_object(optimizer_cfg, OptimizerRegistry)
+    optimizer = build_object(optimizer_cfg, OptimizerRegistry)
 
     optimizer = optax.chain(
         optax.add_decayed_weights(weight_decay=5e-4),
