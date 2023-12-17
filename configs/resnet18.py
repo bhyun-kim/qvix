@@ -4,7 +4,7 @@ work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
 checkpoint_interval = 3910
-log_interval = 1
+log_interval = 100
 validate_interval = 3910
 
 load_from = None
@@ -64,8 +64,8 @@ optimizer = dict(
     name="SGD",
     momentum=0.9,
     scheduler=dict(
-        init_value=0.1,
-        peak_value=0.1,
+        init_value=0.01,
+        peak_value=0.01,
         name="WarmupCosineDecay",
         warmup_steps=1,
         decay_steps=iterations
