@@ -94,8 +94,6 @@ def main() -> None:
             optimizer_cfg['learning_rate'] = scheduler
 
         optimizer = build_object(optimizer_cfg, OptimizerRegistry)
-        
-    import optax 
 
     optimizer = optax.chain(
         optax.add_decayed_weights(weight_decay=5e-4),
