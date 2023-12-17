@@ -53,3 +53,4 @@ def SGD(learning_rate: ScalarOrSchedule,
     return optax.sgd(learning_rate=learning_rate,
                      momentum=momentum,
                      nesterov=nesterov)
+

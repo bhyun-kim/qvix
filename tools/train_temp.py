@@ -38,7 +38,11 @@ def main() -> None:
 
     trainloader_cfg = cfg['train_loader']
     testloader_cfg = cfg['test_loader']
-    optimizer_cfg = cfg['optimizer']
+
+    if 'optimizer' in cfg:
+        optimizer_cfg = cfg['optimizer']
+    elif 'optimizer_chain' in cfg:
+        optimizer_cfg = cfg['optimizer_chain']
 
     os.makedirs(cfg['work_dir'], exist_ok=True)
 
@@ -79,13 +83,26 @@ def main() -> None:
     trainloader = build_dataloader(trainloader_cfg)
     testloader = build_dataloader(testloader_cfg)
 
-    if 'scheduler' in optimizer_cfg:
-        scheduler_cfg = optimizer_cfg.pop('scheduler')
-        scheduler = build_object(scheduler_cfg, SchedulerRegistry)
-        optimizer_cfg['learning_rate'] = scheduler
+    if isinstance(optimizer_cfg, list):
+        optimizer_chain = []
+        
 
-    optimizer = build_object(optimizer_cfg, OptimizerRegistry)
+    elif isinstance(optimizer_cfg, dict):
+        if 'scheduler' in optimizer_cfg:
+            scheduler_cfg = optimizer_cfg.pop('scheduler')
+            scheduler = build_object(scheduler_cfg, SchedulerRegistry)
+            optimizer_cfg['learning_rate'] = scheduler
+
+        optimizer = build_object(optimizer_cfg, OptimizerRegistry)
+        
+    import optax 
+
+    optimizer = optax.chain(
+        optax.add_decayed_weights(weight_decay=5e-4),
+        optimizer
+    )
     opt_state = optimizer.init(eqx.filter(model, eqx.is_array))
+
 
     start_time = time.time()
     logger.info(f"Start training at {time.strftime('%Y-%m-%d %H:%M:%S')}")
