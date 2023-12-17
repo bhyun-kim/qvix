@@ -60,24 +60,7 @@ test_loader = dict(
     ),
 )
 
-# optimizer = dict(
-#     name="SGD",
-#     momentum=0.9,
-#     scheduler=dict(
-#         init_value=0.1,
-#         peak_value=0.1,
-#         name="WarmupCosineDecay",
-#         warmup_steps=1,
-#         decay_steps=iterations
-#     ),
-# )
-
-optimizer_chain = [
-    dict(
-        name='Add_decayed_weights',
-        weight_decay=0.0, 
-    ),
-    dict(
+optimizer = dict(
     name="SGD",
     momentum=0.9,
     scheduler=dict(
@@ -88,5 +71,22 @@ optimizer_chain = [
         decay_steps=iterations
     ),
 )
-]
+
+# optimizer_chain = [
+#     dict(
+#         name='Add_decayed_weights',
+#         weight_decay=0.0, 
+#     ),
+#     dict(
+#     name="SGD",
+#     momentum=0.9,
+#     scheduler=dict(
+#         init_value=0.1,
+#         peak_value=0.1,
+#         name="WarmupCosineDecay",
+#         warmup_steps=1,
+#         decay_steps=iterations
+#     ),
+# )
+# ]
 
