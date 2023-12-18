@@ -133,15 +133,15 @@ def main() -> None:
                         for weight, subkey in zip(weights, jax.random.split(key, len(weights)))]
         model = eqx.tree_at(get_weights, model, new_weights)
 
-        is_conv = lambda x: isinstance(x, eqx.nn.Conv2d)
-        get_bias = lambda m: [x.bias
-                                for x in jax.tree_util.tree_leaves(m, is_leaf=is_conv)
-                                if is_conv(x)]
-        biases = get_bias(model)
-        initializer = jax.nn.initializers.constant(0)
-        new_bias = [initializer(subkey, bias.shape)
-                        for bias, subkey in zip(biases, jax.random.split(key, len(biases)))]
-        model = eqx.tree_at(get_bias, model, new_bias)
+        # is_conv = lambda x: isinstance(x, eqx.nn.Conv2d)
+        # get_bias = lambda m: [x.bias
+        #                         for x in jax.tree_util.tree_leaves(m, is_leaf=is_conv)
+        #                         if is_conv(x)]
+        # biases = get_bias(model)
+        # initializer = jax.nn.initializers.constant(0)
+        # new_bias = [initializer(subkey, bias.shape)
+        #                 for bias, subkey in zip(biases, jax.random.split(key, len(biases)))]
+        # model = eqx.tree_at(get_bias, model, new_bias)
 
         ################################
 
