@@ -106,7 +106,7 @@ def main() -> None:
         weights = get_weights(model)
 
         initializer = jax.nn.initializers.normal(stddev=1e-3)
-        new_weights = [jax.nn.initializers.normal(subkey, weight.shape)
+        new_weights = [initializer(subkey, weight.shape)
                         for weight, subkey in zip(weights, jax.random.split(key, len(weights)))]
         model = eqx.tree_at(get_weights, model, new_weights)
 
