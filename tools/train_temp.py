@@ -133,10 +133,10 @@ def main() -> None:
                         for weight, subkey in zip(weights, jax.random.split(key, len(weights)))]
         model = eqx.tree_at(get_weights, model, new_weights)
 
-        is_conv = lambda x: isinstance(x, eqx.nn.Linear)
+        is_conv = lambda x: isinstance(x, eqx.nn.Conv2d)
         get_bias = lambda m: [x.bias
                                 for x in jax.tree_util.tree_leaves(m, is_leaf=is_conv)
-                                if is_linear(x)]
+                                if is_conv(x)]
         biases = get_bias(model)
         initializer = jax.nn.initializers.constant(0)
         new_bias = [initializer(subkey, bias.shape)
@@ -145,7 +145,7 @@ def main() -> None:
 
         ################################
 
-        is_bn = lambda x: isinstance(x, eqx.nn.Conv2d)
+        is_bn = lambda x: isinstance(x, eqx.nn.BatchNorm)
         get_weights = lambda m: [x.weight
                                 for x in jax.tree_util.tree_leaves(m, is_leaf=is_bn)
                                 if is_bn(x)]
@@ -156,10 +156,10 @@ def main() -> None:
                         for weight, subkey in zip(weights, jax.random.split(key, len(weights)))]
         model = eqx.tree_at(get_weights, model, new_weights)
 
-        is_bn = lambda x: isinstance(x, eqx.nn.Linear)
+        is_bn = lambda x: isinstance(x, eqx.nn.BatchNorm)
         get_bias = lambda m: [x.bias
                                 for x in jax.tree_util.tree_leaves(m, is_leaf=is_bn)
-                                if is_linear(x)]
+                                if is_bn(x)]
         biases = get_bias(model)
         initializer = jax.nn.initializers.constant(0)
         new_bias = [initializer(subkey, bias.shape)
