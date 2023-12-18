@@ -177,13 +177,14 @@ class ResNet(eqx.Module):
         self.stem = nn.Sequential([
             nn.Conv2d(3,
                       64,
-                      kernel_size=3,
-                      stride=1,
+                      kernel_size=7,
+                      stride=2,
                       padding=1,
                       use_bias=False,
                       key=keys[0]),
             nn.BatchNorm(64, axis_name='batch'),
-            nn.Lambda(jnn.relu),
+            nn.Lambda(jnn.relu), 
+            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         ])
 
         self.layer1 = self._make_layer(block, 64, num_blocks[0], 1, keys[1])
