@@ -30,6 +30,8 @@ def main() -> None:
     logger.info(f"Configuration file: {cfg_path}")
     logger.info(f"Configuration: {os.linesep + pformat(cfg)}")
     logger.info(f"JAX devices: {jax.devices()}")
+    
+    device = jax.devices()[0]
 
     loggin_system_info(logger)
     loggin_gpu_info(logger)
@@ -89,6 +91,8 @@ def main() -> None:
 
         x = x.numpy()
         y = y.numpy().astype(int)
+        
+        x, y = jax.device_put((x, y), device)
 
         model, model_state, opt_state, train_loss, train_acc = make_step(
             model, model_state, opt_state, optimizer, key, criterion, x, y)
