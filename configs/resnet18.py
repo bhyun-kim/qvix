@@ -35,7 +35,7 @@ test_transforms = [
 ]
 
 train_loader = dict(
-    dataset=dict(name="CIFAR10Dataset",
+    dataset=dict(name="CIFAR10",
                  root="data/cifar10",
                  train=True,
                  transforms=train_transforms,
@@ -48,7 +48,7 @@ train_loader = dict(
 )
 
 test_loader = dict(
-    dataset=dict(name="CIFAR10Dataset",
+    dataset=dict(name="CIFAR10",
                  root="data/cifar10",
                  train=False,
                  transforms=test_transforms,
@@ -64,29 +64,8 @@ optimizer = dict(
     name="sgd",
     momentum=0.9,
     scheduler=dict(
-        init_value=0.1,
-        peak_value=0.1,
-        name="warmup_cosine_decay_schedule",
-        warmup_steps=1,
-        decay_steps=iterations
+        name="cosine_decay_schedule",
+        init_value=0.1, 
+        decay_steps=iteration
     ),
 )
-
-# optimizer_chain = [
-#     dict(
-#         name='Add_decayed_weights',
-#         weight_decay=0.0, 
-#     ),
-#     dict(
-#     name="SGD",
-#     momentum=0.9,
-#     scheduler=dict(
-#         init_value=0.1,
-#         peak_value=0.1,
-#         name="WarmupCosineDecay",
-#         warmup_steps=1,
-#         decay_steps=iterations
-#     ),
-# )
-# ]
-
