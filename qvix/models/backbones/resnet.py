@@ -33,7 +33,7 @@ class BasicBlock(eqx.Module):
                       padding=1,
                       use_bias=False,
                       key=keys[0]),
-            nn.BatchNorm(out_channels, axis_name='batch'),
+            nn.BatchNorm(out_channels, axis_name='batch', momentum=0.1),
             nn.Lambda(jnn.relu),
             nn.Conv2d(out_channels,
                       out_channels,
@@ -42,7 +42,7 @@ class BasicBlock(eqx.Module):
                       padding=1,
                       use_bias=False,
                       key=keys[1]),
-            nn.BatchNorm(out_channels, axis_name='batch')
+            nn.BatchNorm(out_channels, axis_name='batch', momentum=0.1)
         ])
 
         self.shortcut = nn.Sequential([nn.Identity()])
@@ -56,7 +56,7 @@ class BasicBlock(eqx.Module):
                           stride=stride,
                           use_bias=False,
                           key=keys[0]),
-                nn.BatchNorm(self.expansion * out_channels, axis_name='batch')
+                nn.BatchNorm(self.expansion * out_channels, axis_name='batch', momentum=0.1)
             ])
 
         self.act = jnn.relu
@@ -101,7 +101,7 @@ class Bottleneck(eqx.Module):
                       stride=1,
                       use_bias=False,
                       key=keys[0]),
-            nn.BatchNorm(out_channels, 'batch'),
+            nn.BatchNorm(out_channels, axis_name='batch', momentum=0.1),
             nn.Lambda(jnn.relu),
             nn.Conv2d(out_channels,
                       out_channels,
@@ -110,7 +110,7 @@ class Bottleneck(eqx.Module):
                       padding=1,
                       use_bias=False,
                       key=keys[1]),
-            nn.BatchNorm(out_channels, 'batch'),
+            nn.BatchNorm(out_channels, axis_name='batch', momentum=0.1),
             nn.Lambda(jnn.relu),
             nn.Conv2d(out_channels,
                       self.expansion * out_channels,
@@ -118,7 +118,7 @@ class Bottleneck(eqx.Module):
                       stride=1,
                       use_bias=False,
                       key=keys[2]),
-            nn.BatchNorm(self.expansion * out_channels, 'batch')
+            nn.BatchNorm(self.expansion * out_channels, axis_name='batch', momentum=0.1)
         ])
 
         self.shortcut = nn.Sequential([nn.Identity()])
@@ -132,7 +132,7 @@ class Bottleneck(eqx.Module):
                           stride=stride,
                           use_bias=False,
                           key=keys[0]),
-                nn.BatchNorm(self.expansion * out_channels, 'batch')
+                nn.BatchNorm(self.expansion * out_channels, axis_name='batch', momentum=0.1)
             ])
 
         self.act = jnn.relu
@@ -181,7 +181,7 @@ class ResNet(eqx.Module):
                       padding=3,
                       use_bias=False,
                       key=keys[0]),
-            nn.BatchNorm(64, axis_name='batch'),
+            nn.BatchNorm(64, axis_name='batch', momentum=0.1),
             nn.Lambda(jnn.relu), 
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         ])
