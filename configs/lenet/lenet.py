@@ -7,13 +7,15 @@ checkpoint_interval = 1000
 log_interval = 100
 validate_interval = 1000
 
-load_from = None
-resume_from = None
 
 model = dict(
     name="LeNet5",
     num_classes=10,
 )
+
+load_from = None
+resume_from = None
+initialization = None
 
 loss = dict(name="SoftmaxCrossEntropyLoss")
 
@@ -70,6 +72,6 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="Adam",
+    name="adam",
     learning_rate=3e-4
 )

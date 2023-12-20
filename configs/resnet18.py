@@ -7,13 +7,14 @@ checkpoint_interval = 3910
 log_interval = 100
 validate_interval = 3910
 
-load_from = None
-resume_from = None
-
 model = dict(
     name="ResNet18",
     num_classes=10,
 )
+
+load_from = None
+resume_from = None
+initialization = None
 
 loss = dict(name="SoftmaxCrossEntropyLoss")
 
@@ -60,12 +61,12 @@ test_loader = dict(
 )
 
 optimizer = dict(
-    name="SGD",
+    name="sgd",
     momentum=0.9,
     scheduler=dict(
         init_value=0.1,
         peak_value=0.1,
-        name="WarmupCosineDecay",
+        name="warmup_cosine_decay_schedule",
         warmup_steps=1,
         decay_steps=iterations
     ),
