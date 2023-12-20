@@ -3,8 +3,8 @@ import os
 import time
 from pprint import pformat
 
-import equinox as eqx
 import jax
+import equinox as eqx
 import optax
 
 import qvix
