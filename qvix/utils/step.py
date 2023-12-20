@@ -8,10 +8,8 @@ import jax.numpy as jnp
 import optax
 from jaxtyping import Array, PRNGKeyArray
 
-from qvix.registry import LossRegistry
 
-
-def calculate_step(model: eqx.Module, loss_cfg: dict, key: PRNGKeyArray,
+def calculate_step(model: eqx.Module, criterion: dict, key: PRNGKeyArray,
                    x: Array, y: Array, state: nn.State) -> Array:
     """Forward with optax.softmax_cross_entropy."""
 
@@ -22,9 +20,7 @@ def calculate_step(model: eqx.Module, loss_cfg: dict, key: PRNGKeyArray,
     pred_y = jnp.argmax(logits, axis=1)
     acc = jnp.mean(y == pred_y)
 
-    _loss_cfg = deepcopy(loss_cfg)
-    loss_name = _loss_cfg.pop('name')
-    loss = LossRegistry(loss_name)(logits, y, **_loss_cfg)
+    loss = criterion(logits, y)
     return loss, (acc, state)
 
 
@@ -32,13 +28,13 @@ def calculate_step(model: eqx.Module, loss_cfg: dict, key: PRNGKeyArray,
 def make_step(model: eqx.Module, model_state: nn.State,
               opt_state: optax.OptState,
               optimizer: optax.GradientTransformation, key: PRNGKeyArray,
-              loss_cfg: dict, x: Array,
+              criterion: optax, x: Array,
               y: Array) -> Tuple[eqx.Module, nn.State, optax.OptState, float]:
     keys = jax.random.split(key, num=x.shape[0])
     keys = jax.numpy.array(keys)
 
     (loss, (acc, model_state)), grads = eqx.filter_value_and_grad(
-        calculate_step, has_aux=True)(model, loss_cfg, keys, x, y, model_state)
+        calculate_step, has_aux=True)(model, criterion, keys, x, y, model_state)
     updates, opt_state = optimizer.update(grads, opt_state, model)
     model = eqx.apply_updates(model, updates)
     return model, model_state, opt_state, loss, acc

@@ -17,26 +17,23 @@ load_from = None
 resume_from = None
 initialization = None
 
-loss = dict(name="SoftmaxCrossEntropyLoss")
+loss = dict(name="softmax_cross_entropy_with_integer_labels")
 
-train_transforms = dict(
-    transforms=[
+train_transforms = [
         dict(name="Resize", size=32),
-        dict(name="ToJNP", backend='qvix'),
-        dict(name="Normalize", mean=[0.1307,], std=[0.3081,], backend='qvix'),
-    ])
+        dict(name="ToTensor"),
+        dict(name="Normalize", mean=[0.1307,], std=[0.3081,])
+    ]
 
-test_transforms = dict(
-    backend='torch',
-    transforms=[
+test_transforms = [
         dict(name="Resize", size=32),
-        dict(name="ToJNP", backend='qvix'),
-        dict(name="Normalize", mean=[0.1307,], std=[0.3081,], backend='qvix'),
-    ])
+        dict(name="ToTensor"),
+        dict(name="Normalize", mean=[0.1307,], std=[0.3081,])
+    ]
 
 train_loader = dict(
     dataset=dict(
-        name="MNISTDataset",
+        name="MNIST",
         root="data\MNIST",
         train=True,
         transforms=train_transforms,
@@ -52,7 +49,7 @@ train_loader = dict(
 
 test_loader = dict(
     dataset=dict(
-        name="MNISTDataset",
+        name="MNIST",
         root="data\MNIST",
         train=False,
         transforms=test_transforms,

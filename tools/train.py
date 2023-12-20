@@ -9,7 +9,7 @@ import optax
 
 import qvix
 from qvix.models import initialize_model
-from qvix.builder import build_backbone, build_dataloader, build_optimizer_chain, build_optax_object
+from qvix.builder import build_backbone, build_dataloader, build_optimizer_chain, build_optax_object, OptaxLossFunction
 from qvix.utils import (cvt_cfgPathToDict, evaluate, get_logger,
                         loggin_gpu_info, loggin_system_info, make_step, check_cfg)
 
@@ -49,6 +49,8 @@ def main() -> None:
     logger.info(f"Model: {cfg['model']['name']}")
     logger.info(f"Model Architecture: {model}")
 
+    criterion = OptaxLossFunction(cfg['loss'])
+
     start_iteration = 1
     if cfg['resume_from'] is not None:
         resume_from = os.path.join(cfg['work_dir'], cfg['resume_from'])
@@ -85,7 +87,7 @@ def main() -> None:
         y = y.numpy().astype(int)
 
         model, model_state, opt_state, train_loss, train_acc = make_step(
-            model, model_state, opt_state, optimizer, key, cfg['loss'], x, y)
+            model, model_state, opt_state, optimizer, key, criterion, x, y)
 
         if i % cfg['log_interval'] == 0:
             logger.info(
@@ -98,7 +100,7 @@ def main() -> None:
 
         if i % cfg['validate_interval'] == 0:
             model = eqx.nn.inference_mode(model)
-            val_loss, val_acc = evaluate(model, testloader, key, cfg['loss'],
+            val_loss, val_acc = evaluate(model, testloader, key, criterion,
                                          model_state)
             logger.info(
                 f"Iteration: {i}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_acc * 100:.2f}%"

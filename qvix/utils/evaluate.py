@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import equinox as eqx
+import optax
 import jax
 import jax.numpy as jnp
 from jaxtyping import Array, PRNGKeyArray
@@ -13,7 +14,7 @@ def evaluate(
     model: eqx.Module,
     testloader: DataLoader,
     key: PRNGKeyArray,
-    loss_cfg: dict,
+    criterion: optax,
     state: eqx.nn.State,
 ) -> Tuple[float, float]:
     """This function evaluates the model on the test dataset,
@@ -29,7 +30,7 @@ def evaluate(
         keys = jax.random.split(key, num=x.shape[0])
         keys = jnp.array(keys)
 
-        loss, (acc, _) = calculate_step(model, loss_cfg, keys, x, y, state)
+        loss, (acc, _) = calculate_step(model, criterion, keys, x, y, state)
 
         avg_loss += loss
         avg_acc += acc

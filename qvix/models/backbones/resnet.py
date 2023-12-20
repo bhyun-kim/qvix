@@ -7,7 +7,6 @@ import jax
 import jax.nn as jnn
 from jaxtyping import Array, PRNGKeyArray
 
-from qvix.models.backbones.base_backbone import BaseBackbone, call_layer
 from qvix.registry import BackboneRegistry
 
 
