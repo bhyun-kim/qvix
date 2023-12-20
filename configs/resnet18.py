@@ -16,7 +16,7 @@ load_from = None
 resume_from = None
 initialization = None
 
-loss = dict(name="SoftmaxCrossEntropyLoss")
+loss = dict(name="softmax_cross_entropy_with_integer_labels")
 
 train_transforms = [
     dict(name="RandomCrop", size=32, padding=4),
