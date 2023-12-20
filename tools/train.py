@@ -68,7 +68,8 @@ def main() -> None:
 
     if 'optimizer' in cfg:
         if 'scheduler' in cfg['optimizer']:
-            scheduler = build_optax_object(cfg['optimizer']['scheduler'])
+            scheduler_cfg = cfg['optimizer'].pop('scheduler')
+            scheduler = build_optax_object(scheduler_cfg)
             cfg['optimizer']['learning_rate'] = scheduler
             optimizer = build_optax_object(cfg['optimizer'])
 
