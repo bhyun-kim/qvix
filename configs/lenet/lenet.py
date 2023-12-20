@@ -19,25 +19,20 @@ initialization = None
 
 loss = dict(name="SoftmaxCrossEntropyLoss")
 
-train_transforms = [
-    dict(name="Resize", size=32),
-    dict(name="ToTensor"),
-    dict(name="Normalize", mean=[
-        0.1307,
-    ], std=[
-        0.3081,
-    ]),
-]
+train_transforms = dict(
+    transforms=[
+        dict(name="Resize", size=32),
+        dict(name="ToJNP", backend='qvix'),
+        dict(name="Normalize", mean=[0.1307,], std=[0.3081,], backend='qvix'),
+    ])
 
-test_transforms = [
-    dict(name="Resize", size=32),
-    dict(name="ToTensor"),
-    dict(name="Normalize", mean=[
-        0.1325,
-    ], std=[
-        0.3105,
-    ]),
-]
+test_transforms = dict(
+    backend='torch',
+    transforms=[
+        dict(name="Resize", size=32),
+        dict(name="ToJNP", backend='qvix'),
+        dict(name="Normalize", mean=[0.1307,], std=[0.3081,], backend='qvix'),
+    ])
 
 train_loader = dict(
     dataset=dict(
