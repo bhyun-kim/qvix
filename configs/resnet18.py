@@ -66,6 +66,6 @@ optimizer = dict(
     scheduler=dict(
         name="cosine_decay_schedule",
         init_value=0.1, 
-        decay_steps=iteration
+        decay_steps=iterations
     ),
 )
