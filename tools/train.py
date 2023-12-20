@@ -67,7 +67,11 @@ def main() -> None:
     testloader = build_dataloader(cfg['test_loader'])
 
     if 'optimizer' in cfg:
-        optimizer = build_optax_object(cfg['optimizer'])
+        if 'scheduler' in cfg['optimizer']:
+            scheduler = build_optax_object(cfg['optimizer']['scheduler'])
+            cfg['optimizer']['learning_rate'] = scheduler
+            optimizer = build_optax_object(cfg['optimizer'])
+
     elif 'optimizer_chain' in cfg:
         optimizer = build_optimizer_chain(cfg['optimizer_chain'])
 
