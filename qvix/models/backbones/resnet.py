@@ -179,7 +179,7 @@ class ResNet(eqx.Module):
                       64,
                       kernel_size=7,
                       stride=2,
-                      padding=1,
+                      padding=3,
                       use_bias=False,
                       key=keys[0]),
             nn.BatchNorm(64, axis_name='batch'),
