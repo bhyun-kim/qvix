@@ -11,19 +11,24 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
         init_cfg (dict)
     """
 
-    layer_name = init_cfg['layer']
+    layer_name = init_cfg.pop('layer')
     if hasattr(eqx.nn, layer_name):
         layer_class = getattr(eqx.nn, layer_name)
         is_target = lambda x: isinstance(x, layer_class)
     else:
         raise NotImplementedError(f"Unknown layer: {layer_name}")
 
-    if 'target' not in init_cfg or init_cfg['target'] == 'weight':
+    if 'target' not in init_cfg:
+        init_cfg['target'] = 'weight'
+
+    if init_cfg['target'] == 'weight':
+        init_cfg.pop('target')
         get_targets = lambda m: [
             x.weight for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
             if is_target(x)
         ]
     elif init_cfg['target'] == 'bias':
+        init_cfg.pop('bias')
         get_targets = lambda m: [
             x.bias for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
             if is_target(x)
@@ -34,7 +39,7 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
     initializer_name = init_cfg['initializer']
     if hasattr(jax.nn.initializers, initializer_name):
         initializer = getattr(jax.nn.initializers,
-                              initializer_name)(**init_cfg['kwargs'])
+                              initializer_name)(**init_cfg)
     else:
         raise ValueError(f"Unknown initializer: {initializer_name}")
 
