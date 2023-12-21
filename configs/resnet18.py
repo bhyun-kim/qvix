@@ -24,7 +24,7 @@ train_transforms = [
          contrast=0.2,
          saturation=0.2,
          hue=0.2),
-    dict(name="RandomCrop", size=32, padding=4),
+    dict(name="RandomResizedCrop", scale=(0.9, 1.1), ratio=(0.9, 1.1)),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
     dict(name="Normalize",
@@ -58,9 +58,10 @@ test_loader = dict(
 )
 
 optimizer_chain = [
-    # dict(name="add_decayed_weights", weight_decay=5e-4),
-    dict(name="adamw",
+    dict(name="add_decayed_weights", weight_decay=5e-4),
+    dict(name="sgd",
+         momentum=0.9,
          scheduler=dict(name="cosine_decay_schedule",
-                        init_value=0.001,
+                        init_value=0.1,
                         decay_steps=iterations))
 ]
