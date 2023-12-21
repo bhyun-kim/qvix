@@ -98,7 +98,10 @@ def build_optimizer_chain(
     optimizers = []
 
     for optimizer_cfg in _optimizer_chain_cfg:
-        optimizers.append(build_optax_object(optimizer_cfg))
+        if 'scheduler' in optimizer_cfg or 'learning_rate' in optimizer_cfg:
+            optimizers.append(build_optimizer(optimizer_cfg))
+        else:
+            optimizers.append(build_optax_object(optimizer_cfg))
 
     optimizer = optax.chain(optimizers)
     return optimizer
