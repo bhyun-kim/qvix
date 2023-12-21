@@ -26,10 +26,10 @@ loss = dict(name="softmax_cross_entropy_with_integer_labels")
 
 train_transforms = [
     dict(name='ColorJitter',
-         brightness=0.1,
-         contrast=0.1,
-         saturation=0.1,
-         hue=0.1),
+         brightness=0.05,
+         contrast=0.05,
+         saturation=0.05,
+         hue=0.05),
     dict(name="RandomCrop", size=32, padding=4),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
@@ -67,7 +67,7 @@ optimizer_chain = [
     dict(name="add_decayed_weights", weight_decay=5e-4),
     dict(name="sgd",
          momentum=0.9,
-         scheduler=dict(name="linear_onecycle_schedule",
-                        transition_steps=iterations,
-                        peak_value=0.12))
+         scheduler=dict(name="cosine_decay_schedule",
+                        init_value=0.1,
+                        decay_steps=iterations))
 ]
