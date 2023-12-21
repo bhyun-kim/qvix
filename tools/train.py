@@ -49,7 +49,7 @@ def main() -> None:
     model, model_state = build_backbone(cfg['model'], key)
 
     if cfg['initialization'] is not None:
-        model = initialize_model(model, key)
+        model = initialize_model(model, key, cfg['initialization'])
 
     logger.info(f"Model: {cfg['model']['name']}")
     logger.info(f"Model Architecture: {model}")
