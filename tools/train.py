@@ -7,13 +7,12 @@ import equinox as eqx
 import jax
 import optax
 
-jax.devices()
-
 import qvix
+from qvix.builder import (build_backbone, build_dataloader,
+                          build_optimizer, build_optimizer_chain, build_loss_function)
 from qvix.models import initialize_model
-from qvix.builder import build_backbone, build_dataloader, build_optimizer_chain, build_optax_object, OptaxLossFunction
-from qvix.utils import (cvt_cfgPathToDict, evaluate, get_logger,
-                        loggin_gpu_info, loggin_system_info, make_step, check_cfg)
+from qvix.utils import (check_cfg, cvt_cfgPathToDict, evaluate, get_logger,
+                        loggin_gpu_info, loggin_system_info, make_step)
 
 parser = argparse.ArgumentParser(description="Train classification model.")
 parser.add_argument("cfg", type=str, help="Path to configuration file.")
@@ -32,7 +31,7 @@ def main() -> None:
     logger.info(f"Configuration file: {cfg_path}")
     logger.info(f"Configuration: {os.linesep + pformat(cfg)}")
     logger.info(f"JAX devices: {jax.devices()}")
-    
+
     device = jax.devices()[0]
 
     loggin_system_info(logger)
@@ -53,7 +52,7 @@ def main() -> None:
     logger.info(f"Model: {cfg['model']['name']}")
     logger.info(f"Model Architecture: {model}")
 
-    criterion = OptaxLossFunction(cfg['loss'])
+    criterion = build_loss_function(cfg['loss'])
 
     start_iteration = 1
     if cfg['resume_from'] is not None:
@@ -71,12 +70,7 @@ def main() -> None:
     testloader = build_dataloader(cfg['test_loader'])
 
     if 'optimizer' in cfg:
-        if 'scheduler' in cfg['optimizer']:
-            scheduler_cfg = cfg['optimizer'].pop('scheduler')
-            scheduler = build_optax_object(scheduler_cfg)
-            cfg['optimizer']['learning_rate'] = scheduler
-            optimizer = build_optax_object(cfg['optimizer'])
-
+        optimizer = build_optimizer(cfg['optimizer'])
     elif 'optimizer_chain' in cfg:
         optimizer = build_optimizer_chain(cfg['optimizer_chain'])
 
@@ -94,7 +88,7 @@ def main() -> None:
 
         x = x.numpy()
         y = y.numpy().astype(int)
-        
+
         x, y = jax.device_put((x, y), device)
 
         model, model_state, opt_state, train_loss, train_acc = make_step(
@@ -106,7 +100,8 @@ def main() -> None:
             )
 
         if i % cfg['checkpoint_interval'] == 0:
-            save_checkpoint = os.path.join(cfg['work_dir'], f"iteration_{i}.eqx")
+            save_checkpoint = os.path.join(cfg['work_dir'],
+                                           f"iteration_{i}.eqx")
             eqx.tree_serialise_leaves(save_checkpoint, model)
 
         if i % cfg['validate_interval'] == 0:

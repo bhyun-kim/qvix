@@ -55,15 +55,17 @@ class BasicBlock(eqx.Module):
                           stride=stride,
                           use_bias=False,
                           key=keys[0]),
-                nn.BatchNorm(self.expansion * out_channels, axis_name='batch', momentum=0.1)
+                nn.BatchNorm(self.expansion * out_channels,
+                             axis_name='batch',
+                             momentum=0.1)
             ])
 
         self.act = jnn.relu
 
-    def __call__(self, 
-                 x: Array, 
+    def __call__(self,
+                 x: Array,
                  state: nn.State,
-                key: Optional[PRNGKeyArray] = None) -> Array:
+                 key: Optional[PRNGKeyArray] = None) -> Array:
         """Forward pass.
 
         Args:
@@ -117,7 +119,9 @@ class Bottleneck(eqx.Module):
                       stride=1,
                       use_bias=False,
                       key=keys[2]),
-            nn.BatchNorm(self.expansion * out_channels, axis_name='batch', momentum=0.1)
+            nn.BatchNorm(self.expansion * out_channels,
+                         axis_name='batch',
+                         momentum=0.1)
         ])
 
         self.shortcut = nn.Sequential([nn.Identity()])
@@ -131,13 +135,17 @@ class Bottleneck(eqx.Module):
                           stride=stride,
                           use_bias=False,
                           key=keys[0]),
-                nn.BatchNorm(self.expansion * out_channels, axis_name='batch', momentum=0.1)
+                nn.BatchNorm(self.expansion * out_channels,
+                             axis_name='batch',
+                             momentum=0.1)
             ])
 
         self.act = jnn.relu
 
-    def __call__(self, x: Array, state:nn.State,
-                key: Optional[PRNGKeyArray] = None) -> Array:
+    def __call__(self,
+                 x: Array,
+                 state: nn.State,
+                 key: Optional[PRNGKeyArray] = None) -> Array:
         """Forward pass.
 
         Args:
@@ -181,7 +189,7 @@ class ResNet(eqx.Module):
                       use_bias=False,
                       key=keys[0]),
             nn.BatchNorm(64, axis_name='batch', momentum=0.1),
-            nn.Lambda(jnn.relu), 
+            nn.Lambda(jnn.relu),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         ])
 
@@ -200,14 +208,15 @@ class ResNet(eqx.Module):
         strides = [stride] + [1] * (num_blocks - 1)
         layers = []
         for stride in strides:
-            layers.append(block(self.in_channels, channels, key, stride=stride))
+            layers.append(block(self.in_channels, channels, key,
+                                stride=stride))
             self.in_channels = channels * block.expansion
         return layers
 
     def __call__(self,
-                x: Array,
-                state: nn.State = None,
-                key: Optional[PRNGKeyArray] = None) -> Array:
+                 x: Array,
+                 state: nn.State = None,
+                 key: Optional[PRNGKeyArray] = None) -> Array:
         """Forward pass.
 
         Args:
@@ -216,7 +225,6 @@ class ResNet(eqx.Module):
             key (Optional[PRNGKeyArray]): ignored; only for compatibility with other backbones.
         """
         out, state = self.stem(x, state=state)
-        
 
         for layer in self.layer1:
             out, state = layer(out, state=state)

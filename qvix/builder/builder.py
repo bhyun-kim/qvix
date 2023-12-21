@@ -7,8 +7,7 @@ import optax
 
 import jax.numpy as jnp
 
-from qvix.registry import (BackboneRegistry, 
-                           Registry)
+from qvix.registry import (BackboneRegistry, Registry)
 
 
 def build_object(cfg: dict,
@@ -30,7 +29,7 @@ def build_object(cfg: dict,
         return registry(name)(key, **_cfg)
     else:
         return registry(name)(**_cfg)
-    
+
 
 def build_backbone(model_cfg: dict, key: PRNGKeyArray) -> eqx.Module:
     """Build model.
@@ -64,7 +63,28 @@ def build_optax_object(cfg: dict) -> Any:
 
     return getattr(optax, name)(**_cfg)
 
-def build_optimizer_chain(optimizer_chain_cfg: dict) -> optax.GradientTransformationExtraArgs:
+
+def build_optimizer(
+        optimizer_cfg: dict) -> optax.GradientTransformationExtraArgs:
+    """Build optimizer.
+    
+    Args:
+        optimizer_cfg (dict)
+        model (eqx.Module)
+    
+    Returns:
+        optimizer (optax.GradientTransformationExtraArgs)
+    """
+    if 'scheduler' in optimizer_cfg:
+        scheduler_cfg = optimizer_cfg.pop('scheduler')
+        scheduler = build_optax_object(scheduler_cfg)
+        optimizer_cfg['learning_rate'] = scheduler
+    optimizer = build_optax_object(optimizer_cfg['optimizer'])
+    return optimizer
+
+
+def build_optimizer_chain(
+        optimizer_chain_cfg: dict) -> optax.GradientTransformationExtraArgs:
     """Build optimizer chain.
     
     Args:
@@ -79,9 +99,22 @@ def build_optimizer_chain(optimizer_chain_cfg: dict) -> optax.GradientTransforma
 
     for optimizer_cfg in _optimizer_chain_cfg:
         optimizers.append(build_optax_object(optimizer_cfg))
-        
+
     optimizer = optax.chain(optimizers)
     return optimizer
+
+
+def build_loss_function(loss_cfg: dict) -> Any:
+    """Build loss function.
+    
+    Args:
+        loss_cfg (dict)
+    
+    Returns:
+        Any
+    """
+    return OptaxLossFunction(loss_cfg)
+
 
 class OptaxLossFunction(object):
     """Optax loss function.
@@ -89,16 +122,14 @@ class OptaxLossFunction(object):
     Args:
         loss_cfg (dict)
     """
-    def __init__(self, 
-                 loss_cfg: dict,
-                 reduce:str ="mean"):
+
+    def __init__(self, loss_cfg: dict, reduce: str = "mean") -> None:
         self._loss_cfg = deepcopy(loss_cfg)
         self._reduce = reduce
         self._loss_name = self._loss_cfg.pop('name')
         self._loss = getattr(optax, self._loss_name)
-        
 
-    def __call__(self, *args):
+    def __call__(self, *args) -> jnp.ndarray:
         losses = self._loss(*args, **self._loss_cfg)
         if self._reduce == "mean":
             return jnp.mean(losses)
@@ -107,5 +138,5 @@ class OptaxLossFunction(object):
         elif self._reduce == "none":
             return losses
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"OptaxLossFunction(loss_name={self._loss_name})"

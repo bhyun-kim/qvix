@@ -7,7 +7,6 @@ checkpoint_interval = 1000
 log_interval = 100
 validate_interval = 1000
 
-
 model = dict(
     name="LeNet5",
     num_classes=10,
@@ -20,16 +19,24 @@ initialization = None
 loss = dict(name="softmax_cross_entropy_with_integer_labels")
 
 train_transforms = [
-        dict(name="Resize", size=32),
-        dict(name="ToTensor"),
-        dict(name="Normalize", mean=[0.1307,], std=[0.3081,])
-    ]
+    dict(name="Resize", size=32),
+    dict(name="ToTensor"),
+    dict(name="Normalize", mean=[
+        0.1307,
+    ], std=[
+        0.3081,
+    ])
+]
 
 test_transforms = [
-        dict(name="Resize", size=32),
-        dict(name="ToTensor"),
-        dict(name="Normalize", mean=[0.1307,], std=[0.3081,])
-    ]
+    dict(name="Resize", size=32),
+    dict(name="ToTensor"),
+    dict(name="Normalize", mean=[
+        0.1307,
+    ], std=[
+        0.3081,
+    ])
+]
 
 train_loader = dict(
     dataset=dict(
@@ -63,7 +70,4 @@ test_loader = dict(
     ),
 )
 
-optimizer = dict(
-    name="adam",
-    learning_rate=3e-4
-)
+optimizer = dict(name="adam", learning_rate=3e-4)

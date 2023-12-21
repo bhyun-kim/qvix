@@ -40,11 +40,7 @@ train_loader = dict(
                  train=True,
                  transforms=train_transforms,
                  download=True),
-    dataloader=dict(
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=4
-    ),
+    dataloader=dict(batch_size=batch_size, shuffle=True, num_workers=4),
 )
 
 test_loader = dict(
@@ -53,19 +49,13 @@ test_loader = dict(
                  train=False,
                  transforms=test_transforms,
                  download=True),
-    dataloader=dict(
-        batch_size=128,
-        shuffle=False,
-        num_workers=4
-    ),
+    dataloader=dict(batch_size=128, shuffle=False, num_workers=4),
 )
 
 optimizer = dict(
     name="sgd",
     momentum=0.9,
-    scheduler=dict(
-        name="cosine_decay_schedule",
-        init_value=0.1, 
-        decay_steps=iterations
-    ),
+    scheduler=dict(name="cosine_decay_schedule",
+                   init_value=0.1,
+                   decay_steps=iterations),
 )

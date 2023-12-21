@@ -1,9 +1,9 @@
 from typing import Tuple
 
 import equinox as eqx
-import optax
 import jax
 import jax.numpy as jnp
+import optax
 from jaxtyping import Array, PRNGKeyArray
 from torch.utils.data import DataLoader
 
