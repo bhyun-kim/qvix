@@ -79,7 +79,7 @@ def build_optimizer(
         scheduler_cfg = optimizer_cfg.pop('scheduler')
         scheduler = build_optax_object(scheduler_cfg)
         optimizer_cfg['learning_rate'] = scheduler
-    optimizer = build_optax_object(optimizer_cfg['optimizer'])
+    optimizer = build_optax_object(optimizer_cfg)
     return optimizer
 
 
