@@ -1,11 +1,11 @@
-iterations = 39100
+iterations = 64000
 batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
 
-checkpoint_interval = 3910
-log_interval = 100
-validate_interval = 3910
+checkpoint_interval = 6400
+log_interval = 200
+validate_interval = 64000
 
 model = dict(
     name="ResNet18",
@@ -64,10 +64,11 @@ test_loader = dict(
 )
 
 optimizer_chain = [
-    dict(name="add_decayed_weights", weight_decay=5e-4),
+    dict(name="add_decayed_weights", weight_decay=0.0001),
     dict(name="sgd",
          momentum=0.9,
          scheduler=dict(name="cosine_decay_schedule",
                         init_value=0.1,
-                        decay_steps=iterations))
+                        decay_steps=iterations,
+                        alpha=0.001)),
 ]
