@@ -60,7 +60,6 @@ test_loader = dict(
 optimizer_chain = [
     # dict(name="add_decayed_weights", weight_decay=5e-4),
     dict(name="adamw",
-         momentum=0.9,
          scheduler=dict(name="cosine_decay_schedule",
                         init_value=0.001,
                         decay_steps=iterations))
