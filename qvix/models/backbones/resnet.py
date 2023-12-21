@@ -174,24 +174,48 @@ class ResNet(eqx.Module):
                  block: BasicBlock or Bottleneck,
                  num_blocks: int,
                  key: PRNGKeyArray,
-                 num_classes: int = 10):
+                 num_classes: int = 10,
+                 small_stem: bool = False):
+        """
+        Args:
+            block (BasicBlock or Bottleneck)
+            num_blocks (int)
+            key (PRNGKeyArray)
+            num_classes (int)
+            small_stem (bool) : If True, use 3x3 conv in stem. Otherwise, use 7x7 conv.
+                This is intended for datasets with small image size such as CIFAR-10/100.
+        """
         super().__init__()
         self.in_channels = 64
 
         keys = jax.random.split(key, 6)
 
-        self.stem = nn.Sequential([
-            nn.Conv2d(3,
-                      64,
-                      kernel_size=7,
-                      stride=2,
-                      padding=3,
-                      use_bias=False,
-                      key=keys[0]),
-            nn.BatchNorm(64, axis_name='batch', momentum=0.1),
-            nn.Lambda(jnn.relu),
-            nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        ])
+        if small_stem:
+            self.stem = nn.Sequential([
+                nn.Conv2d(3,
+                        64,
+                        kernel_size=3,
+                        stride=1,
+                        padding=3,
+                        use_bias=False,
+                        key=keys[0]),
+                nn.BatchNorm(64, axis_name='batch', momentum=0.1),
+                nn.Lambda(jnn.relu)
+            ])
+
+        else:
+            self.stem = nn.Sequential([
+                nn.Conv2d(3,
+                        64,
+                        kernel_size=7,
+                        stride=2,
+                        padding=3,
+                        use_bias=False,
+                        key=keys[0]),
+                nn.BatchNorm(64, axis_name='batch', momentum=0.1),
+                nn.Lambda(jnn.relu),
+                nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+            ])
 
         self.layer1 = self._make_layer(block, 64, num_blocks[0], 1, keys[1])
         self.layer2 = self._make_layer(block, 128, num_blocks[1], 2, keys[2])
