@@ -52,10 +52,11 @@ test_loader = dict(
     dataloader=dict(batch_size=128, shuffle=False, num_workers=4),
 )
 
-optimizer = dict(
-    name="sgd",
-    momentum=0.9,
-    scheduler=dict(name="cosine_decay_schedule",
-                   init_value=0.1,
-                   decay_steps=iterations),
-)
+optimizer_chain = [
+    dict(name="add_decayed_weights", weight_decay=5e-4),
+    dict(name="sgd",
+         momentum=0.9,
+         scheduler=dict(name="cosine_decay_schedule",
+                        init_value=0.1,
+                        decay_steps=iterations))
+]

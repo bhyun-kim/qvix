@@ -7,11 +7,11 @@ import equinox as eqx
 import jax
 import optax
 
-jax.devices() # To prevent conflict with torch gpu
+jax.devices()  # To prevent conflict with torch gpu
 
 import qvix
-from qvix.builder import (build_backbone, build_dataloader,
-                          build_optimizer, build_optimizer_chain, build_loss_function)
+from qvix.builder import (build_backbone, build_dataloader, build_optimizer,
+                          build_optimizer_chain, build_loss_function)
 from qvix.models import initialize_model
 from qvix.utils import (check_cfg, cvt_cfgPathToDict, evaluate, get_logger,
                         loggin_gpu_info, loggin_system_info, make_step)
