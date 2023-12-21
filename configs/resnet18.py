@@ -16,8 +16,8 @@ load_from = None
 resume_from = None
 initialization = [
     dict(layer="Conv2d", initializer="he_normal"),
-    dict(layer="BatchNorm", initializer="constant", target="bias", value=0.0),
     dict(layer="BatchNorm", initializer="constant", target="weight", value=1.0),
+    dict(layer="BatchNorm", initializer="constant", target="bias", value=0.0),
     dict(layer="Linear", initializer="normal", target="weight", stddev=1e-3),
     dict(layer="Linear", initializer="constant", target="bias", value=0.0)
 ]
