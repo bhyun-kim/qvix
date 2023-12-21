@@ -3,9 +3,11 @@ import os
 import time
 from pprint import pformat
 
-import jax
 import equinox as eqx
+import jax
 import optax
+
+jax.devices()
 
 import qvix
 from qvix.models import initialize_model
