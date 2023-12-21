@@ -19,11 +19,11 @@ initialization = None
 loss = dict(name="softmax_cross_entropy_with_integer_labels")
 
 train_transforms = [
-    dict(name='ColorJitter',
-         brightness=0.2,
-         contrast=0.2,
-         saturation=0.2,
-         hue=0.2),
+    # dict(name='ColorJitter',
+    #      brightness=0.2,
+    #      contrast=0.2,
+    #      saturation=0.2,
+    #      hue=0.2),
     dict(name="RandomCrop", size=32, padding=4),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
@@ -58,10 +58,10 @@ test_loader = dict(
 )
 
 optimizer_chain = [
-    dict(name="add_decayed_weights", weight_decay=5e-4),
-    dict(name="sgd",
+    # dict(name="add_decayed_weights", weight_decay=5e-4),
+    dict(name="adamw",
          momentum=0.9,
          scheduler=dict(name="cosine_decay_schedule",
-                        init_value=0.1,
+                        init_value=0.001,
                         decay_steps=iterations))
 ]
