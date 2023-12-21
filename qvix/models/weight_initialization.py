@@ -28,7 +28,7 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
             if is_target(x)
         ]
     elif init_cfg['target'] == 'bias':
-        init_cfg.pop('bias')
+        init_cfg.pop('target')
         get_targets = lambda m: [
             x.bias for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
             if is_target(x)
