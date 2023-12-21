@@ -18,7 +18,7 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
     else:
         raise NotImplementedError(f"Unknown layer: {layer_name}")
 
-    if init_cfg['target'] is None or init_cfg['target'] == 'weight':
+    if 'target' not in init_cfg or init_cfg['target'] == 'weight':
         get_targets = lambda m: [
             x.weight for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
             if is_target(x)
