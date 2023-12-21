@@ -36,7 +36,7 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
 
     targets = get_targets(model)
 
-    initializer_name = init_cfg['initializer']
+    initializer_name = init_cfg.pop('initializer')
     if hasattr(jax.nn.initializers, initializer_name):
         initializer = getattr(jax.nn.initializers,
                               initializer_name)(**init_cfg)
