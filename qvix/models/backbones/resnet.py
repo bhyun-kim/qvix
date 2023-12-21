@@ -270,37 +270,37 @@ class ResNet(eqx.Module):
 class ResNet18(ResNet):
     """ResNet18"""
 
-    def __init__(self, key: PRNGKeyArray, num_classes: int = -1):
-        super().__init__(BasicBlock, [2, 2, 2, 2], key, num_classes)
+    def __init__(self, key: PRNGKeyArray, num_classes: int = -1, small_stem:bool = False):
+        super().__init__(BasicBlock, [2, 2, 2, 2], key, num_classes, small_stem=small_stem)
 
 
 @BackboneRegistry.register()
 class ResNet34(ResNet):
     """ResNet34"""
 
-    def __init__(self, key: PRNGKeyArray, num_classes: int = -1):
-        super().__init__(BasicBlock, [3, 4, 6, 3], key, num_classes)
+    def __init__(self, key: PRNGKeyArray, num_classes: int = -1, small_stem:bool = False):
+        super().__init__(BasicBlock, [3, 4, 6, 3], key, num_classes, small_stem=small_stem)
 
 
 @BackboneRegistry.register()
 class ResNet50(ResNet):
     """ResNet50"""
 
-    def __init__(self, key: PRNGKeyArray, num_classes: int = -1):
-        super().__init__(Bottleneck, [3, 4, 6, 3], key, num_classes)
+    def __init__(self, key: PRNGKeyArray, num_classes: int = -1, small_stem:bool = False):
+        super().__init__(Bottleneck, [3, 4, 6, 3], key, num_classes, small_stem=small_stem)
 
 
 @BackboneRegistry.register()
 class ResNet101(ResNet):
     """ResNet101"""
 
-    def __init__(self, key: PRNGKeyArray, num_classes: int = -1):
-        super().__init__(Bottleneck, [3, 4, 23, 3], key, num_classes)
+    def __init__(self, key: PRNGKeyArray, num_classes: int = -1, small_stem:bool = False):
+        super().__init__(Bottleneck, [3, 4, 23, 3], key, num_classes, small_stem=small_stem)
 
 
 @BackboneRegistry.register()
 class ResNet152(ResNet):
     """ResNet152"""
 
-    def __init__(self, key: PRNGKeyArray, num_classes: int = -1):
-        super().__init__(Bottleneck, [3, 8, 36, 3], key, num_classes)
+    def __init__(self, key: PRNGKeyArray, num_classes: int = -1, small_stem:bool = False):
+        super().__init__(Bottleneck, [3, 8, 36, 3], key, num_classes, small_stem=small_stem)
