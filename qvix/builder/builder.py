@@ -103,7 +103,7 @@ def build_optimizer_chain(
         else:
             optimizers.append(build_optax_object(optimizer_cfg))
 
-    optimizer = optax.chain(optimizers)
+    optimizer = optax.chain(*optimizers)
     return optimizer
 
 
