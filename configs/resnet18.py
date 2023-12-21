@@ -1,4 +1,4 @@
-iterations = 19550
+iterations = 39100
 batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
