@@ -14,16 +14,22 @@ model = dict(
 
 load_from = None
 resume_from = None
-initialization = None
+initialization = [
+    dict(layer="Conv2d", initializer="he_normal"),
+    dict(layer="BatchNorm2d", initializer="constant", target="bias", value=0.0),
+    dict(layer="BatchNorm2d", initializer="constant", target="weight", value=1.0),
+    dict(layer="Linear", initializer="normal", target="weight", stddev=1e-3),
+    dict(layer="Linear", initializer="constant", target="bias", value=0.0)
+]
 
 loss = dict(name="softmax_cross_entropy_with_integer_labels")
 
 train_transforms = [
     dict(name='ColorJitter',
-         brightness=0.2,
-         contrast=0.2,
-         saturation=0.2,
-         hue=0.2),
+         brightness=0.1,
+         contrast=0.1,
+         saturation=0.1,
+         hue=0.1),
     dict(name="RandomCrop", size=32, padding=4),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),

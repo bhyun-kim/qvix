@@ -18,11 +18,18 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
     else:
         raise NotImplementedError(f"Unknown layer: {layer_name}")
 
-    get_weights = lambda m: [
-        x.weight for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
-        if is_target(x)
-    ]
-    weights = get_weights(model)
+    if init_cfg['target'] is None or init_cfg['target'] == 'weight':
+        get_targets = lambda m: [
+            x.weight for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
+            if is_target(x)
+        ]
+    elif init_cfg['target'] == 'bias':
+        get_targets = lambda m: [
+            x.bias for x in jax.tree_util.tree_leaves(m, is_leaf=is_target)
+            if is_target(x)
+        ]
+
+    targets = get_targets(model)
 
     initializer_name = init_cfg['initializer']
     if hasattr(jax.nn.initializers, initializer_name):
@@ -33,9 +40,9 @@ def initialize_layer(model: eqx.Module, key: jax.random.PRNGKey,
 
     new_weights = [
         initializer(subkey, weight.shape)
-        for weight, subkey in zip(weights, jax.random.split(key, len(weights)))
+        for weight, subkey in zip(targets, jax.random.split(key, len(targets)))
     ]
-    model = eqx.tree_at(get_weights, model, new_weights)
+    model = eqx.tree_at(get_targets, model, new_weights)
 
     return model
 
