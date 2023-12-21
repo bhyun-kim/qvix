@@ -10,6 +10,7 @@ validate_interval = 6400
 model = dict(
     name="ResNet18",
     num_classes=10,
+    small_stem=True
 )
 
 load_from = None
