@@ -5,7 +5,7 @@ seed = 0
 
 checkpoint_interval = 6400
 log_interval = 200
-validate_interval = 64000
+validate_interval = 6400
 
 model = dict(
     name="ResNet18",
