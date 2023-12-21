@@ -1,4 +1,4 @@
-iterations = 78200
+iterations = 19550
 batch_size = 128
 work_dir = "work_dir/resnet/cifar10"
 seed = 0
@@ -24,8 +24,7 @@ train_transforms = [
          contrast=0.2,
          saturation=0.2,
          hue=0.2),
-    dict(name="RandomResizedCrop", size=32, scale=(0.9, 1.1),
-         ratio=(0.9, 1.1)),
+    dict(name="RandomCrop", size=32, padding=4),
     dict(name="RandomHorizontalFlip", p=0.5),
     dict(name="ToTensor"),
     dict(name="Normalize",
@@ -62,7 +61,7 @@ optimizer_chain = [
     dict(name="add_decayed_weights", weight_decay=5e-4),
     dict(name="sgd",
          momentum=0.9,
-         scheduler=dict(name="cosine_decay_schedule",
-                        init_value=0.1,
-                        decay_steps=iterations))
+         scheduler=dict(name="linear_onecycle_schedule",
+                        transition_steps=iterations,
+                        peak_value=0.12))
 ]
