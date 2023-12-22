@@ -1,6 +1,6 @@
 iterations = 64000
 batch_size = 128
-work_dir = "work_dir/ResNet50/cifar10"
+work_dir = "work_dir/ResNet101/cifar10"
 seed = 0
 
 checkpoint_interval = 6400
