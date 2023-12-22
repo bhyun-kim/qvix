@@ -18,6 +18,7 @@ from qvix.utils import (check_cfg, cvt_cfgPathToDict, evaluate, get_logger,
 
 parser = argparse.ArgumentParser(description="Train classification model.")
 parser.add_argument("cfg", type=str, help="Path to configuration file.")
+parser.add_argument("--work_dir", type=str, help="Path to working directory.")
 
 
 def main() -> None:
@@ -26,6 +27,9 @@ def main() -> None:
 
     cfg = cvt_cfgPathToDict(cfg_path)
     check_cfg(cfg)
+
+    if args.work_dir is not None:
+        cfg['work_dir'] = args.work_dir
 
     os.makedirs(cfg['work_dir'], exist_ok=True)
 
