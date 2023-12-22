@@ -65,7 +65,7 @@ test_loader = dict(
 )
 
 optimizer_chain = [
-    dict(name="add_decayed_weights", weight_decay=0.0001),
+    dict(name="add_decayed_weights", weight_decay=0.0005),
     dict(name="sgd",
          momentum=0.9,
          scheduler=dict(name="cosine_decay_schedule",
