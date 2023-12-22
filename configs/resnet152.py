@@ -1,6 +1,6 @@
 iterations = 64000
 batch_size = 128
-work_dir = "work_dir/ResNet151/cifar10"
+work_dir = "work_dir/ResNet152/cifar10"
 seed = 0
 
 checkpoint_interval = 6400
@@ -8,7 +8,7 @@ log_interval = 200
 validate_interval = 6400
 
 model = dict(
-    name="ResNet151",
+    name="ResNet152",
     num_classes=10,
     small_stem=True
 )
