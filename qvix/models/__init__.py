@@ -1,3 +1,3 @@
-from .classifier import ImageClassifier
+from .weight_initialization import initialize_model
 
-__all__ = ['ImageClassifier']
+__all__ = ['initialize_model']

@@ -1,8 +1,9 @@
-from inspect import signature
 from typing import Optional
 
 import equinox as eqx
+import equinox.nn as nn
 import jax
+import jax.nn as jnn
 from jaxtyping import Array, PRNGKeyArray
 
 from qvix.registry import BackboneRegistry
@@ -10,72 +11,50 @@ from qvix.registry import BackboneRegistry
 
 @BackboneRegistry.register()
 class LeNet5(eqx.Module):
-    """LeNet5 <https://ieeexplore.ieee.org/document/726791>.
-
-    
+    """LeNet5 <https://ieeexplore.ieee.org/document/726791>.    
     """
-
-    features: eqx.nn.Sequential
+    features: nn.Sequential
     num_classes: int
-    classifier: eqx.nn.Sequential
+    classifier: nn.Sequential
 
     def __init__(self, key: PRNGKeyArray, num_classes: int = -1):
 
         keys = jax.random.split(key, 2)
 
         self.num_classes = num_classes
-        self.features = [
-            eqx.nn.Conv2d(1, 6, 5, key=keys[0]),
-            jax.nn.relu,
-            eqx.nn.MaxPool2d(2, 2),
-            jax.nn.relu,
-            eqx.nn.Conv2d(6, 16, 5, key=keys[1]),
-            jax.nn.relu,
-            eqx.nn.MaxPool2d(2, 2),
-        ]
+        self.features = nn.Sequential([
+            nn.Conv2d(1, 6, 5, key=keys[0]),
+            nn.Lambda(jnn.relu),
+            nn.MaxPool2d(2, 2),
+            nn.Lambda(jnn.relu),
+            nn.Conv2d(6, 16, 5, key=keys[1]),
+            nn.Lambda(jnn.relu),
+            nn.MaxPool2d(2, 2),
+        ])
 
         if num_classes > 0:
             keys = jax.random.split(key, 3)
-            self.classifier = [
-                eqx.nn.Linear(16 * 5 * 5, 120, key=keys[0]), jax.nn.relu,
-                eqx.nn.Linear(120, 84, key=keys[1]), jax.nn.relu,
-                eqx.nn.Linear(84, num_classes, key=keys[2])
-            ]
+            self.classifier = nn.Sequential([
+                nn.Linear(16 * 5 * 5, 120, key=keys[0]),
+                nn.Lambda(jnn.relu),
+                nn.Linear(120, 84, key=keys[1]),
+                nn.Lambda(jnn.relu),
+                nn.Linear(84, num_classes, key=keys[2])
+            ])
 
-    def forward(self,
-                x: Array,
-                key: Optional[PRNGKeyArray],
-                inference: bool = False) -> Array:
+    def __call__(self,
+                 x: Array,
+                 state: nn.State = None,
+                 key: Optional[PRNGKeyArray] = None) -> Array:
         """Forward pass.
 
         Args:
             x (Array): Input tensor.
+            key (PRNGKeyArray): ignored; only for compatibility with other backbones.
+            state (nn.State): ignored; only for compatibility with other backbones.
         """
 
-        kwargs = {"key": key, "inference": inference}
-
-        for layer in self.features:
-            x = call_layer(layer, x, **kwargs)
-
-        if self.num_classes > 0:
-            x = x.reshape(-1)
-            for layer in self.classifier:
-                x = call_layer(layer, x, **kwargs)
-
-        return x
-
-    def __call__(self,
-                 x: Array,
-                 key: Optional[PRNGKeyArray],
-                 inference: bool = False) -> Array:
-        """Forward with vectorization."""
-        return jax.vmap(self.forward, in_axes=(0, 0, None))(x, key, inference)
-
-
-def call_layer(layer: eqx.Module, x: Array, **kwargs):
-    """Call a layer, passing additional keyword arguments if the layer accepts them."""
-
-    layer_params = signature(layer.__call__).parameters
-    accepted_kwargs = {k: v for k, v in kwargs.items() if k in layer_params}
-
-    return layer(x, **accepted_kwargs)
+        out = self.features(x)
+        out = out.reshape(-1)
+        out = self.classifier(out)
+        return out, state

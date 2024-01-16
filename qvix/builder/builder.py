@@ -1,15 +1,13 @@
 from copy import deepcopy
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 
 import equinox as eqx
-import torchvision as tv
-from jaxtyping import Array, PRNGKeyArray
-from torch.utils.data import DataLoader
+from jaxtyping import PRNGKeyArray
+import optax
 
 import jax.numpy as jnp
 
-from qvix.registry import (BackboneRegistry, DatasetRegistry,
-                                LossRegistry, Registry, TransformRegistry)
+from qvix.registry import (BackboneRegistry, Registry)
 
 
 def build_object(cfg: dict,
@@ -24,112 +22,124 @@ def build_object(cfg: dict,
     Returns:
         Any
     """
-    name = cfg.pop("name")
+    _cfg = deepcopy(cfg)
+    name = _cfg.pop("name")
 
     if key is not None:
-        return registry(name)(key, **cfg)
+        return registry(name)(key, **_cfg)
     else:
-        return registry(name)(**cfg)
+        return registry(name)(**_cfg)
 
 
-def build_dataloader(dataloader_cfg: dict) -> DataLoader:
-    """Build dataloader.
+def build_backbone(model_cfg: dict, key: PRNGKeyArray) -> eqx.Module:
+    """Build model.
     
     Args:
-        dataloader_cfg (dict)
-    
-    Returns:
-        dataloader (torch.utils.data.DataLoader)
-    """
-    dataset_cfg = dataloader_cfg.pop("dataset")
-    # build transforms
-    transforms_cfg = dataset_cfg.pop("transforms")
-    transforms = []
-    for transform in transforms_cfg:
-        name = transform.pop("name")
-        transforms.append(TransformRegistry(name)(**transform))
-
-    transforms = tv.transforms.Compose(transforms)
-
-    dataset_name = dataset_cfg.pop("name")
-    dataset = DatasetRegistry(dataset_name)(**dataset_cfg,
-                                            transform=transforms)
-
-    return DataLoader(dataset=dataset, **dataloader_cfg['dataloader'])
-
-
-def build_backbone(backbone_cfg: dict, key: PRNGKeyArray) -> eqx.Module:
-    """Build backbone.
-    
-    Args:
+        model_cfg (dict)
         key (jax.random.PRNGKey)
-        backbone_cfg (dict)
     
     Returns:
-        backbone (eqx.Module)
+        model (eqx.Module)
     """
-    return build_object(backbone_cfg, BackboneRegistry, key)
+    _model_cfg = deepcopy(model_cfg)
+
+    model_name = _model_cfg.pop("name")
+    model = BackboneRegistry(model_name)
+    model, model_state = eqx.nn.make_with_state(model)(key, **_model_cfg)
+    return model, model_state
 
 
-def build_transforms(transform_cfgs: list) -> Callable:
-    """Build transform.
+def build_optax_object(cfg: dict) -> Any:
+    """Build optax object.
     
     Args:
-        transform_cfg (list)
+        cfg (dict)
     
     Returns:
-        transform (Callable)
+        Any
     """
-    transforms = []
+    _cfg = deepcopy(cfg)
+    name = _cfg.pop("name")
 
-    for transform in transform_cfgs:
-        name = transform.pop("name")
-        transforms.append(TransformRegistry(name)(**transform))
-
-    return tv.transforms.Compose(transforms)
+    return getattr(optax, name)(**_cfg)
 
 
-def build_dataset(dataset_cfg: dict) -> Any:
-    """Build dataset.
+def build_optimizer(
+        optimizer_cfg: dict) -> optax.GradientTransformationExtraArgs:
+    """Build optimizer.
     
     Args:
-        dataset_cfg (dict)
+        optimizer_cfg (dict)
+        model (eqx.Module)
     
     Returns:
-        dataset (Any)
+        optimizer (optax.GradientTransformationExtraArgs)
     """
-    dataset_cfg["transforms"] = build_transforms(dataset_cfg["transforms"])
-    return build_object(dataset_cfg, DatasetRegistry)
+    if 'scheduler' in optimizer_cfg:
+        scheduler_cfg = optimizer_cfg.pop('scheduler')
+        scheduler = build_optax_object(scheduler_cfg)
+        optimizer_cfg['learning_rate'] = scheduler
+    optimizer = build_optax_object(optimizer_cfg)
+    return optimizer
 
 
-def calculate_loss(model: eqx.Module,
-                   loss_cfg: dict,
-                   key: PRNGKeyArray,
-                   x: Array,
-                   labels: Array,
-                   inference: bool = False) -> Array:
-    """Forward with optax.softmax_cross_entropy."""
+def build_optimizer_chain(
+        optimizer_chain_cfg: dict) -> optax.GradientTransformationExtraArgs:
+    """Build optimizer chain.
+    
+    Args:
+        optimizer_chain_cfg (dict)
+        model (eqx.Module)
+    
+    Returns:
+        optimizer (optax.GradientTransformationExtraArgs)
+    """
+    _optimizer_chain_cfg = deepcopy(optimizer_chain_cfg)
+    optimizers = []
 
-    logits = model(x, key=key, inference=inference)
+    for optimizer_cfg in _optimizer_chain_cfg:
+        if 'scheduler' in optimizer_cfg or 'learning_rate' in optimizer_cfg:
+            optimizers.append(build_optimizer(optimizer_cfg))
+        else:
+            optimizers.append(build_optax_object(optimizer_cfg))
 
-    _loss_cfg = deepcopy(loss_cfg)
-    loss_name = _loss_cfg.pop('name')
-    return LossRegistry(loss_name)(logits, labels, **_loss_cfg)
+    optimizer = optax.chain(*optimizers)
+    return optimizer
 
-def calculate_step(model: eqx.Module,
-                   loss_cfg: dict,
-                   key: PRNGKeyArray,
-                   x: Array,
-                   y: Array,
-                   inference: bool = False) -> Array:
-    """Forward with optax.softmax_cross_entropy."""
 
-    logits = model(x, key=key, inference=inference)
+def build_loss_function(loss_cfg: dict) -> Any:
+    """Build loss function.
+    
+    Args:
+        loss_cfg (dict)
+    
+    Returns:
+        Any
+    """
+    return OptaxLossFunction(loss_cfg)
 
-    pred_y = jnp.argmax(logits, axis=1)
-    acc = jnp.mean(y == pred_y)
 
-    _loss_cfg = deepcopy(loss_cfg)
-    loss_name = _loss_cfg.pop('name')
-    loss = LossRegistry(loss_name)(logits, y, **_loss_cfg)
-    return loss, acc
+class OptaxLossFunction(object):
+    """Optax loss function.
+    
+    Args:
+        loss_cfg (dict)
+    """
+
+    def __init__(self, loss_cfg: dict, reduce: str = "mean") -> None:
+        self._loss_cfg = deepcopy(loss_cfg)
+        self._reduce = reduce
+        self._loss_name = self._loss_cfg.pop('name')
+        self._loss = getattr(optax, self._loss_name)
+
+    def __call__(self, *args) -> jnp.ndarray:
+        losses = self._loss(*args, **self._loss_cfg)
+        if self._reduce == "mean":
+            return jnp.mean(losses)
+        elif self._reduce == "sum":
+            return jnp.sum(losses)
+        elif self._reduce == "none":
+            return losses
+
+    def __repr__(self) -> str:
+        return f"OptaxLossFunction(loss_name={self._loss_name})"
