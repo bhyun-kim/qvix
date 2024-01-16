@@ -18,11 +18,10 @@ The depth of representations is of central importance for many visual recognitio
 
 | Model | Validation Accuracy | config | download    |
 | :--------- | --------------------- | :------- | ------------- |
-| ResNet-34  | 94.36%              | config | [model](https://drive.google.com/file/d/1-KAR6tC6wZNvkKL5C105t5VdxDmRvXt8/view?usp=sharing) / [log](https://drive.google.com/file/d/1-edPcaBcgVK0Bs4J1pB1HW91f0uFN_PT/view?usp=sharing) |
-| ResNet-50  | 93.36%              | config | [model](https://drive.google.com/file/d/1-ZhMNGqGFdS2TRTG1hn3qgSzkBksYV5t/view?usp=sharing) / [log](https://drive.google.com/file/d/1txbkjLfDu4d2bVTwidn_vlA6rSny7-Qc/view?usp=sharing) |
-
-| ResNet-101  | 95.37%              | config | [model](https://drive.google.com/file/d/1-_UcL3fDeU9jG0taKDB9Hv6gP5Bgg7Ns/view?usp=sharing) / [log](https://drive.google.com/file/d/1-0hrXmi3FGcxx5TmIwsb0m0xQBQrRupf/view?usp=sharing) |
-| ResNet-152 | 95.18%              | config | [model](https://drive.google.com/file/d/1-jhTNhHOS-bqTXR33mvwRMa6aKnKhhU5/view?usp=sharing) / [log](https://drive.google.com/file/d/1-74tcVx1Avxz6FOU9IIYb9E7ZX3OmA5V/view?usp=sharing) |
+| ResNet-34  | 94.36%              | [config](https://github.com/bhyun-kim/qvix/blob/main/configs/resnet/resnet34.py) | [model](https://drive.google.com/file/d/1-KAR6tC6wZNvkKL5C105t5VdxDmRvXt8/view?usp=sharing) / [log](https://drive.google.com/file/d/1-edPcaBcgVK0Bs4J1pB1HW91f0uFN_PT/view?usp=sharing) |
+| ResNet-50  | 93.36%              | [config](https://github.com/bhyun-kim/qvix/blob/main/configs/resnet/resnet50.py) | [model](https://drive.google.com/file/d/1-ZhMNGqGFdS2TRTG1hn3qgSzkBksYV5t/view?usp=sharing) / [log](https://drive.google.com/file/d/1txbkjLfDu4d2bVTwidn_vlA6rSny7-Qc/view?usp=sharing) |
+| ResNet-101  | 95.37%              | [config](https://github.com/bhyun-kim/qvix/blob/main/configs/resnet/resnet101.py) | [model](https://drive.google.com/file/d/1-_UcL3fDeU9jG0taKDB9Hv6gP5Bgg7Ns/view?usp=sharing) / [log](https://drive.google.com/file/d/1-0hrXmi3FGcxx5TmIwsb0m0xQBQrRupf/view?usp=sharing) |
+| ResNet-152 | 95.18%              | [config](https://github.com/bhyun-kim/qvix/blob/main/configs/resnet/resnet152.py) | [model](https://drive.google.com/file/d/1-jhTNhHOS-bqTXR33mvwRMa6aKnKhhU5/view?usp=sharing) / [log](https://drive.google.com/file/d/1-74tcVx1Avxz6FOU9IIYb9E7ZX3OmA5V/view?usp=sharing) |
 
 ## Citation
 
